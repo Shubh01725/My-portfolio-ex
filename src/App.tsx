@@ -148,17 +148,17 @@ const Nav = () => {
   const { setCursorType } = useContext(CursorContext);
   return (
     <nav className="fixed top-0 left-0 w-full p-12 flex justify-between items-start z-50 pointer-events-none">
-      <div className="font-mono text-[10px] tracking-widest uppercase pointer-events-auto cursor-none group flex items-center gap-4" 
+        <div className="font-mono text-[11px] tracking-widest uppercase pointer-events-auto cursor-none group flex items-center gap-4 text-white mix-blend-difference" 
            onMouseEnter={() => setCursorType("hover")} 
            onMouseLeave={() => setCursorType("default")}>
         <div className="w-2 h-2 bg-accent rounded-full group-hover:scale-150 transition-transform" />
-        KINETIC.SYSTEMS // 2024
+        Shubham, Portfolio // 2026
       </div>
       <div className="flex gap-12 pointer-events-auto">
         {["WORK", "STUDIO", "INFO"].map((item) => (
           <button 
             key={item}
-            className="font-mono text-[10px] tracking-widest uppercase hover:text-accent transition-colors mix-blend-difference"
+            className="font-mono text-[10px] tracking-widest uppercase hover:text-accent transition-colors text-white mix-blend-difference"
             onMouseEnter={() => setCursorType("hover")}
             onMouseLeave={() => setCursorType("default")}
           >
@@ -171,15 +171,35 @@ const Nav = () => {
 };
 
 const SectionHero = () => {
+  const [hoverState, setHoverState] = useState<"none" | "pixels" | "power">("none");
+  const { setCursorType } = useContext(CursorContext);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (hoverState === "pixels") {
+      root.style.setProperty("--dynamic-accent", "#00E0FF"); // Electric Blue
+    } else if (hoverState === "power") {
+      root.style.setProperty("--dynamic-accent", "#FF1F1F"); // Blood Red
+    } else {
+      root.style.setProperty("--dynamic-accent", "#C0FF00"); // Original Acid Green
+    }
+  }, [hoverState]);
+
   return (
     <section className="h-screen w-screen flex flex-col justify-center items-center p-8 relative overflow-hidden shrink-0">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center flex flex-col items-center">
+      {/* Background interactions */}
+      <motion.div 
+        animate={{ opacity: hoverState === "power" ? 1 : 0 }}
+        className="absolute inset-0 wireframe-grid pointer-events-none z-0"
+      />
+
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center flex flex-col items-center z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 0.3, y: 0 }}
-          className="font-mono text-[10px] tracking-widest mb-4"
+          className="font-mono text-[10px] tracking-widest mb-4 uppercase"
         >
-          [ CREATIVE TECHNOLOGIST ]
+          [ bridging the gap between your code and imagination ]
         </motion.div>
         
         <div className="relative">
@@ -187,9 +207,18 @@ const SectionHero = () => {
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
-            className="text-[25vw] leading-[0.7] font-black tracking-[-0.08em]"
+            onMouseEnter={() => {
+              setHoverState("pixels");
+              setCursorType("hover");
+            }}
+            onMouseLeave={() => {
+              setHoverState("none");
+              setCursorType("default");
+            }}
+            className={`text-[18vw] leading-[0.7] font-black tracking-[-0.08em] transition-all duration-300 cursor-none select-none ${hoverState === 'pixels' ? 'glitch-hover text-accent' : ''}`}
+            data-text="PIXELS"
           >
-            SHAPING
+            PIXELS
           </motion.h1>
           <motion.div 
             initial={{ scaleX: 0 }}
@@ -203,14 +232,25 @@ const SectionHero = () => {
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 0.1, ease: [0.33, 1, 0.68, 1] }}
-          className="text-[25vw] leading-[0.7] font-black tracking-[-0.08em] text-transparent"
-          style={{ WebkitTextStroke: "2px rgba(255,255,255,0.2)" }}
+          onMouseEnter={() => {
+            setHoverState("power");
+            setCursorType("hover");
+          }}
+          onMouseLeave={() => {
+            setHoverState("none");
+            setCursorType("default");
+          }}
+          className="text-[18vw] leading-[0.7] font-black tracking-[-0.08em] text-transparent transition-all duration-500 cursor-none"
+          style={{ 
+            WebkitTextStroke: hoverState === 'power' ? "2px var(--dynamic-accent)" : "2px rgba(255,255,255,0.2)",
+            color: hoverState === 'power' ? "var(--dynamic-accent)" : "transparent"
+          }}
         >
-          MOTION
+          POWER
         </motion.h1>
       </div>
 
-      <div className="absolute bottom-12 left-12 grid grid-cols-2 gap-24 w-[calc(100%-6rem)]">
+      <div className="absolute bottom-12 left-12 grid grid-cols-2 gap-24 w-[calc(100%-6rem)] z-20">
         <div className="font-mono text-[9px] tracking-tight max-w-[240px] opacity-40 uppercase leading-loose">
           Explorations in digital materiality. building environments that respond to human presence. No defaults. No templates.
         </div>
